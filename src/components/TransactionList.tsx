@@ -13,7 +13,7 @@ import { Trash } from 'lucide-react';
 interface TransactionListProps {
   transactions: Transaction[];
   type: 'income' | 'expenses';
-  onTransactionDeleted: (id: number) => Promise<void>;
+  onTransactionDeleted: (id: string) => Promise<void>; // Changed id type to string
 }
 
 const TransactionList = ({ transactions, type, onTransactionDeleted }: TransactionListProps) => {
@@ -62,13 +62,9 @@ const TransactionList = ({ transactions, type, onTransactionDeleted }: Transacti
     setSearchTerm(event.target.value);
   };
 
-   const handleDelete = async (id: number | string) => {
-    const numericId = Number(id);
-    if (isNaN(numericId)) {
-      console.error("Invalid ID for deletion:", id);
-      return;
-    }
-    await onTransactionDeleted(numericId);
+   const handleDelete = async (id: string) => { // Changed id type to string
+    // No need to convert to number, Firestore IDs are strings
+    await onTransactionDeleted(id);
   };
 
   const filteredTransactions = sortedTransactions.filter((transaction) => {
@@ -154,7 +150,7 @@ const TransactionList = ({ transactions, type, onTransactionDeleted }: Transacti
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDelete(transaction.id)}
+                        onClick={() => handleDelete(transaction.id)} // transaction.id is already a string
                         aria-label="Видалити транзакцію"
                       >
                         <Trash className="h-4 w-4" />
@@ -178,3 +174,4 @@ const TransactionList = ({ transactions, type, onTransactionDeleted }: Transacti
 };
 
 export default TransactionList;
+
